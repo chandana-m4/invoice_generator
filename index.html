@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chandu Technologies - Smart Invoice</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div>
+            <h1>CHANDU TECHNOLOGIES</h1>
+            <p>Innovate • Build • Grow</p>
+            <span>chandusc253@gmail.com</span>
+        </div>
+
+        <div class="invoice-title">
+            <h2>INVOICE</h2>
+            <p id="invoiceNumber">INV-000000</p>
+            <p id="invoiceDate"></p>
+        </div>
+    </header>
+
+
+    <!-- CUSTOMER DETAILS -->
+    <section class="card">
+
+        <h2 class="section-title">Customer Details</h2>
+
+        <div class="form-grid">
+
+            <div class="input-group">
+                <label>Company Name</label>
+                <input
+                    type="text"
+                    id="companyName"
+                    placeholder="Enter company name"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Customer Name</label>
+                <input
+                    type="text"
+                    id="customerName"
+                    placeholder="Enter customer name"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input
+                    type="text"
+                    id="phone"
+                    placeholder="Enter phone number"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    value="chandusc253@gmail.com"
+                    placeholder="Enter email"
+                >
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PRODUCT DETAILS -->
+    <section class="card">
+
+        <h2 class="section-title">Product Details</h2>
+
+        <div class="product-inputs">
+
+            <div class="input-group product-name">
+                <label>Product Name</label>
+                <input
+                    type="text"
+                    id="productName"
+                    placeholder="Enter product name"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Quantity</label>
+                <input
+                    type="number"
+                    id="quantity"
+                    min="1"
+                    placeholder="Qty"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Price</label>
+                <input
+                    type="number"
+                    id="price"
+                    min="0"
+                    step="0.01"
+                    placeholder="Price"
+                >
+            </div>
+
+        </div>
+
+        <div class="button-row">
+
+            <button
+                class="btn primary"
+                id="addProductBtn"
+                onclick="addProduct()"
+            >
+                + Add Product
+            </button>
+
+            <button
+                class="btn secondary"
+                id="editProductBtn"
+                onclick="editSelectedProduct()"
+            >
+                ✏️ Edit Selected
+            </button>
+
+            <button
+                class="btn success"
+                id="updateProductBtn"
+                onclick="updateProduct()"
+                style="display:none;"
+            >
+                ✓ Update Product
+            </button>
+
+            <button
+                class="btn danger"
+                onclick="removeSelectedProduct()"
+            >
+                🗑 Remove Selected
+            </button>
+
+        </div>
+
+
+        <!-- PRODUCT TABLE -->
+        <div class="table-wrapper">
+
+            <table id="productTable">
+
+                <thead>
+                    <tr>
+                        <th>PRODUCT</th>
+                        <th>QTY</th>
+                        <th>PRICE</th>
+                        <th>TOTAL</th>
+                    </tr>
+                </thead>
+
+                <tbody id="productTableBody">
+                    <tr>
+                        <td colspan="4" class="empty-row">
+                            No products added
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- INVOICE SUMMARY -->
+    <section class="card">
+
+        <h2 class="section-title">Invoice Summary</h2>
+
+        <div class="summary-layout">
+
+            <div class="tax-inputs">
+
+                <div class="input-group">
+                    <label>GST (%)</label>
+
+                    <input
+                        type="number"
+                        id="gst"
+                        value="18"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        oninput="calculateTotals()"
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label>Discount (%)</label>
+
+                    <input
+                        type="number"
+                        id="discount"
+                        value="0"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        oninput="calculateTotals()"
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <div class="summary-line">
+                    <span>Subtotal</span>
+                    <strong id="subtotal">Rs. 0.00</strong>
+                </div>
+
+                <div class="summary-line">
+                    <span>Discount</span>
+                    <strong id="discountAmount">
+                        - Rs. 0.00
+                    </strong>
+                </div>
+
+                <div class="summary-line">
+                    <span>GST</span>
+                    <strong id="gstAmount">
+                        Rs. 0.00
+                    </strong>
+                </div>
+
+                <div class="grand-total">
+                    <span>GRAND TOTAL</span>
+
+                    <strong id="grandTotal">
+                        Rs. 0.00
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PAYMENT DETAILS -->
+    <section class="card">
+
+        <h2 class="section-title">Payment Details</h2>
+
+        <div class="form-grid">
+
+            <div class="input-group">
+
+                <label>Payment Method</label>
+
+                <select id="paymentMethod">
+
+                    <option value="Cash">Cash</option>
+
+                    <option value="UPI">UPI</option>
+
+                    <option value="Card">Card</option>
+
+                    <option value="Bank Transfer">
+                        Bank Transfer
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label>Payment Status</label>
+
+                <select id="paymentStatus">
+
+                    <option value="Paid">Paid</option>
+
+                    <option value="Pending">Pending</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ACTION BUTTONS -->
+    <section class="actions">
+
+        <button
+            class="generate-btn"
+            onclick="generateInvoice()"
+        >
+            📄 Generate Invoice
+        </button>
+
+        <button
+            class="clear-btn"
+            onclick="clearForm()"
+        >
+            🧹 Clear Form
+        </button>
+
+    </section>
+
+
+    <!-- STATUS -->
+    <div id="statusMessage"></div>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>
+            CHANDU TECHNOLOGIES • Smart Invoice Generator
+        </p>
+
+    </footer>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
